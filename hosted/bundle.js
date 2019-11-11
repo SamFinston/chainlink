@@ -5,7 +5,7 @@ var handleDomo = function handleDomo(e, csrf) {
 
     $("#domoMessage").animate({ width: 'hide' }, 350);
 
-    if ($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoTalent").val() == '') {
+    if ($("#domoName").val() == '' || $("#domoTalent").val() == '') {
 
         handleError("RAWR! All fields are required");
         return false;
@@ -33,23 +33,17 @@ var DomoForm = function DomoForm(props) {
         React.createElement(
             "label",
             { htmlFor: "name" },
-            "Name: "
+            "name: "
         ),
         React.createElement("input", { id: "domoName", type: "text", name: "name", placeholder: "Domo Name" }),
         React.createElement(
             "label",
-            { htmlFor: "age" },
-            "Age: "
-        ),
-        React.createElement("input", { id: "domoAge", type: "text", name: "age", placeholder: "Domo Age" }),
-        React.createElement(
-            "label",
             { htmlFor: "talent" },
-            "Talent: "
+            "url: "
         ),
         React.createElement("input", { id: "domoTalent", type: "text", name: "talent", placeholder: "Domo Talent" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Make Domo" })
+        React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "add link" })
     );
 };
 
@@ -69,35 +63,30 @@ var DomoList = function DomoList(props) {
     var domoNodes = props.domos.map(function (domo) {
         return React.createElement(
             "div",
-            { key: domo._id, className: "domo", onClick: function onClick() {
-                    ageDomo(domo.name, props.csrf);
-                } },
-            React.createElement("img", { src: "/assets/img/domoFace.jpeg", alt: "domo face", className: "domoFace" }),
-            React.createElement(
-                "h3",
-                { className: "domoName" },
-                " Name: ",
-                domo.name,
-                " "
-            ),
+            { className: "linkBar" },
             React.createElement(
                 "div",
-                { className: "domoDetails" },
+                { className: "favicon" },
+                React.createElement("img", { src: "/assets/img/ricon.ico", className: "icon" })
+            ),
+            React.createElement(
+                "a",
+                { href: domo.talent, className: "link" },
                 React.createElement(
-                    "h3",
-                    { className: "domoAge" },
-                    " Age: ",
-                    domo.age,
-                    " "
-                ),
-                React.createElement(
-                    "h3",
-                    { className: "domoTalent" },
-                    " Talent: ",
-                    domo.talent,
-                    " "
+                    "div",
+                    { key: domo._id },
+                    React.createElement(
+                        "h3",
+                        { className: "linkName" },
+                        domo.name,
+                        " "
+                    )
                 )
-            )
+            ),
+            React.createElement("div", { className: "edit" }),
+            React.createElement("div", { className: "remove", onClick: function onClick() {
+                    removeDomo(domo.name, props.csrf);
+                } })
         );
     });
 
@@ -124,6 +113,12 @@ var setup = function setup(csrf) {
 
 var ageDomo = function ageDomo(name, csrf) {
     sendAjax('POST', "/ageDomo?_csrf=" + csrf, { name: name }, function (data) {
+        loadDomosFromServer(csrf);
+    });
+};
+
+var removeDomo = function removeDomo(name, csrf) {
+    sendAjax('POST', "/removeDomo?_csrf=" + csrf, { name: name }, function (data) {
         loadDomosFromServer(csrf);
     });
 };

@@ -3,7 +3,7 @@ const handleDomo = (e, csrf) => {
 
     $("#domoMessage").animate({ width: 'hide' }, 350);
 
-    if ($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoTalent").val() == '') {
+    if ($("#domoName").val() == '' || $("#domoTalent").val() == '') {
 
         handleError("RAWR! All fields are required");
         return false;
@@ -25,14 +25,12 @@ const DomoForm = (props) => {
             method="POST"
             className="domoForm"
         >
-            <label htmlFor="name">Name: </label>
+            <label htmlFor="name">name: </label>
             <input id="domoName" type="text" name="name" placeholder="Domo Name" />
-            <label htmlFor="age">Age: </label>
-            <input id="domoAge" type="text" name="age" placeholder="Domo Age" />
-            <label htmlFor="talent">Talent: </label>
+            <label htmlFor="talent">url: </label>
             <input id="domoTalent" type="text" name="talent" placeholder="Domo Talent" />
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+            <input className="makeDomoSubmit" type="submit" value="add link" />
 
         </form>
     )
@@ -50,13 +48,15 @@ const DomoList = function (props) {
 
     const domoNodes = props.domos.map(function (domo) {
         return (
-            <div key={domo._id} className="domo" onClick={() => {ageDomo(domo.name, props.csrf)} }>
-                <img src="/assets/img/domoFace.jpeg" alt="domo face" className="domoFace" />
-                <h3 className="domoName"> Name: {domo.name} </h3>
-                <div className="domoDetails">
-                    <h3 className="domoAge"> Age: {domo.age} </h3>
-                    <h3 className="domoTalent"> Talent: {domo.talent} </h3>
-                </div>
+            <div className="linkBar">
+                <div className="favicon"><img src="/assets/img/ricon.ico" className="icon"></img></div>
+                <a href={domo.talent} className="link">
+                    <div key={domo._id} >
+                        <h3 className="linkName">{domo.name} </h3>
+                    </div>
+                </a>
+                <div className="edit" ></div>
+                <div className="remove" onClick={() => {removeDomo(domo.name, props.csrf)} }></div>
             </div>
         );
     });
@@ -90,6 +90,12 @@ const setup = function(csrf) {
 
 const ageDomo = (name, csrf) => {
     sendAjax('POST', `/ageDomo?_csrf=${csrf}`, {name: name}, (data) => {
+        loadDomosFromServer(csrf);
+    });
+};
+
+const removeDomo = (name, csrf) => {
+    sendAjax('POST', `/removeDomo?_csrf=${csrf}`, {name: name}, (data) => {
         loadDomosFromServer(csrf);
     });
 };

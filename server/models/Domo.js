@@ -2,10 +2,18 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const _ = require('underscore');
 
+// const getFavicons = require('get-website-favicon');
+
 let DomoModel = {};
 
 const convertId = mongoose.Types.ObjectId;
 const setName = (name) => _.escape(name).trim();
+// const getFavicon = (url) => {
+//   getFavicons('github.com').then(data => {
+//     console.dir(data.icons[0].src);
+//     return data.icons[0].src;
+//   });
+// };
 
 const DomoSchema = new mongoose.Schema({
   name: {
@@ -13,12 +21,6 @@ const DomoSchema = new mongoose.Schema({
     required: true,
     trim: true,
     set: setName,
-  },
-
-  age: {
-    type: Number,
-    min: 0,
-    required: true,
   },
 
   owner: {
@@ -38,12 +40,17 @@ const DomoSchema = new mongoose.Schema({
     default: 'none',
     trim: true,
   },
+
+  icon: {
+    type: String,
+    required: false,
+  },
 });
 
 DomoSchema.statics.toAPI = (doc) => ({
   name: doc.name,
-  age: doc.age,
   talent: doc.talent,
+  icon: doc.icon,
 });
 
 DomoSchema.statics.findByOwner = (ownerId, callback) => {
@@ -51,7 +58,7 @@ DomoSchema.statics.findByOwner = (ownerId, callback) => {
     owner: convertId(ownerId),
   };
 
-  return DomoModel.find(search).select('name age talent').exec(callback);
+  return DomoModel.find(search).select('name talent icon').exec(callback);
 };
 
 DomoSchema.statics.findByName = (ownerId, name, callback) => {
@@ -60,16 +67,16 @@ DomoSchema.statics.findByName = (ownerId, name, callback) => {
     name,
   };
 
-  return DomoModel.find(search).select('name age talent').exec(callback);
+  return DomoModel.find(search).select('name talent icon').exec(callback);
 };
 
-DomoSchema.statics.incrementAge = (ownerId, name, callback) => {
+DomoSchema.statics.remove = (ownerId, name, callback) => {
   const search = {
     owner: convertId(ownerId),
     name,
   };
 
-  return DomoModel.findOne(search).exec(callback);
+  return DomoModel.deleteOne(search).exec(callback);
 };
 
 DomoModel = mongoose.model('Domo', DomoSchema);
