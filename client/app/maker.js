@@ -49,7 +49,7 @@ const DomoList = function (props) {
     const domoNodes = props.domos.map(function (domo) {
         return (
             <div className="linkBar">
-                <div className="favicon"><img src="/assets/img/ricon.ico" className="icon"></img></div>
+                <div className="favicon"><img src={domo.icon} className="icon"></img></div>
                 <a href={domo.talent} className="link">
                     <div key={domo._id} >
                         <h3 className="linkName">{domo.name} </h3>

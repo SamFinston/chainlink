@@ -3,13 +3,6 @@ const models = require('../models');
 const Domo = models.Domo;
 
 const getFavicons = require('get-website-favicon');
-const getFavicon = (url) => {
-  getFavicons(url).then(data => {
-    console.dir(data.icons[0].src);
-    // updateIcon(name, src);
-    return data.icons[0].src;
-  });
-};
 
 const makerPage = (req, res) => {
   Domo.DomoModel.findByOwner(req.session.account._id, (err, docs) => {
@@ -24,32 +17,61 @@ const makerPage = (req, res) => {
 
 const makeDomo = (req, res) => {
   if (!req.body.name || !req.body.talent) {
-    return res.status(400).json({ error: 'RAWR! All fields are required' });
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
-  const domoData = {
-    name: req.body.name,
-    talent: req.body.talent,
-    owner: req.session.account._id,
-    icon: getFavicon(req.body.talent),
-  };
+  return getFavicons(req.body.talent).then(data => {
+    console.dir(data.icons[0].src);
 
-  const newDomo = new Domo.DomoModel(domoData);
+    const domoData = {
+      name: req.body.name,
+      talent: req.body.talent,
+      owner: req.session.account._id,
+      icon: data.icons[1].src,
+    };
 
-  const domoPromise = newDomo.save();
+    const newDomo = new Domo.DomoModel(domoData);
 
-  domoPromise.then(() => res.json({ redirect: '/maker' }));
+    const domoPromise = newDomo.save();
 
-  domoPromise.catch((err) => {
-    console.log(err);
-    if (err.code === 11000) {
-      return res.status(400).json({ error: 'Domo already exists' });
-    }
+    domoPromise.then(() => res.json({ redirect: '/maker' }));
 
-    return res.status(400).json({ error: 'An error occured' });
+    domoPromise.catch((err) => {
+      console.log(err);
+      if (err.code === 11000) {
+        return res.status(400).json({ error: 'Domo already exists' });
+      }
+
+      return res.status(400).json({ error: 'An error occured' });
+    });
+
+    return domoPromise;
+  }).catch((e) => {
+    console.log(e);
+    const domoData = {
+      name: req.body.name,
+      talent: req.body.talent,
+      owner: req.session.account._id,
+      icon: "assets/img/ricon.ico",
+    };
+
+    const newDomo = new Domo.DomoModel(domoData);
+
+    const domoPromise = newDomo.save();
+
+    domoPromise.then(() => res.json({ redirect: '/maker' }));
+
+    domoPromise.catch((err) => {
+      console.log(err);
+      if (err.code === 11000) {
+        return res.status(400).json({ error: 'Domo already exists' });
+      }
+
+      return res.status(400).json({ error: 'An error occured' });
+    });
+
+    return domoPromise;
   });
-
-  return domoPromise;
 };
 
 const getDomos = (request, response) => {

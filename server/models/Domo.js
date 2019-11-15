@@ -43,7 +43,7 @@ const DomoSchema = new mongoose.Schema({
 
   icon: {
     type: String,
-    required: false,
+    required: true,
   },
 });
 

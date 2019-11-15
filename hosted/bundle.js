@@ -67,7 +67,7 @@ var DomoList = function DomoList(props) {
             React.createElement(
                 "div",
                 { className: "favicon" },
-                React.createElement("img", { src: "/assets/img/ricon.ico", className: "icon" })
+                React.createElement("img", { src: domo.icon, className: "icon" })
             ),
             React.createElement(
                 "a",
