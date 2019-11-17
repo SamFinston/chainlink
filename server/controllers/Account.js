@@ -6,6 +6,10 @@ const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
 };
 
+const passwordPage = (req, res) => {
+  res.render('password', { csrfToken: req.csrfToken() });
+};
+
 const logout = (req, res) => {
   req.session.destroy();
   res.redirect('/');
@@ -30,7 +34,7 @@ const login = (request, response) => {
 
     req.session.account = Account.AccountModel.toAPI(account);
 
-    return res.json({ redirect: '/maker' });
+    return res.json({ redirect: '/main' });
   });
 };
 
@@ -64,7 +68,7 @@ const signup = (request, response) => {
 
     savePromise.then(() => {
       req.session.account = Account.AccountModel.toAPI(newAccount);
-      return res.json({ redirect: '/maker' });
+      return res.json({ redirect: '/main' });
     });
 
     savePromise.catch((err) => {
@@ -79,6 +83,41 @@ const signup = (request, response) => {
   });
 };
 
+const changePassword = (request, response) => {
+  const req = request;
+  const res = response;
+
+  // cast to strings to cover up security flaws
+  const oldPassword = `${req.body.original}`;
+  const newPassword = `${req.body.new}`;
+  const confirm = `${req.body.confirm}`;
+
+  if (!oldPassword || !newPassword || !confirm) {
+    return res.status(400).json({ error: 'RAWR! All fields are required' });
+  }
+
+  if (newPassword !== confirm) {
+    return res.status(400).json({ error: 'RAWR! Passwords do not match' });
+  }
+
+  return Account.AccountModel.authenticate(req.session.account.username,
+    oldPassword, (err, account) => {
+      if (err || !account) {
+        return res.status(401).json({ error: 'Wrong password' });
+      }
+
+      return Account.AccountModel.generateHash(newPassword, (salt, hash) => {
+        Account.AccountModel.updateOne(
+          { username: req.session.account.username },
+          { salt, password: hash },
+          (e) => {
+            if (e) console.log(e);
+            return res.json({ redirect: '/main' });
+          });
+      });
+    });
+};
+
 const getToken = (request, response) => {
   const req = request;
   const res = response;
@@ -91,7 +130,9 @@ const getToken = (request, response) => {
 };
 
 module.exports.loginPage = loginPage;
+module.exports.passwordPage = passwordPage;
 module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
+module.exports.changePassword = changePassword;
 module.exports.getToken = getToken;

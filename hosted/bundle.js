@@ -5,17 +5,129 @@ var handleDomo = function handleDomo(e, csrf) {
 
     $("#domoMessage").animate({ width: 'hide' }, 350);
 
-    if ($("#domoName").val() == '' || $("#domoTalent").val() == '') {
+    if ($("#domoName").val() == '' || $("#domoUrl").val() == '') {
 
         handleError("RAWR! All fields are required");
         return false;
     }
 
     sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-        loadDomosFromServer(csrf);
+        loadLinksFromServer(csrf);
     });
 
     return false;
+};
+
+var handleEdit = function handleEdit(oldName, e, csrf) {
+    e.preventDefault();
+
+    $("#domoMessage").animate({ width: 'hide' }, 350);
+
+    if ($("#newName").val() == '' || $("#newURL").val() == '') {
+
+        handleError("RAWR! All fields are required");
+        return false;
+    }
+
+    var params = $("#editForm").serialize() + ("&oldName=" + oldName);
+
+    sendAjax('POST', $("#editForm").attr("action"), params, function () {
+        loadLinksFromServer(csrf);
+    });
+
+    return false;
+};
+
+var handlePassword = function handlePassword(e) {
+    e.preventDefault();
+
+    $("#domoMessage").animate({ width: 'hide' }, 350);
+
+    if ($("#original").val() == '' || $("#new").val() == '' || $("#confirm").val() == '') {
+        handleError("RAWR! All fields are required");
+        return false;
+    }
+
+    if ($("#new").val() !== $("#confirm").val()) {
+        handleError("RAWR! Passwords do not match");
+        return false;
+    }
+
+    sendAjax('POST', $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
+
+    return false;
+};
+
+var PasswordWindow = function PasswordWindow(props) {
+    return React.createElement(
+        "form",
+        { id: "signupForm",
+            name: "signupForm",
+            onSubmit: handlePassword,
+            action: "/password",
+            method: "POST",
+            className: "mainForm"
+        },
+        React.createElement(
+            "label",
+            { htmlFor: "original" },
+            "Current Password: "
+        ),
+        React.createElement("input", { id: "original", type: "password", name: "original", placeholder: "password" }),
+        React.createElement(
+            "label",
+            { htmlFor: "new" },
+            "New Password: "
+        ),
+        React.createElement("input", { id: "new", type: "password", name: "new", placeholder: "new password" }),
+        React.createElement(
+            "label",
+            { htmlFor: "confirm" },
+            "Confirm New Password: "
+        ),
+        React.createElement("input", { id: "confirm", type: "password", name: "confirm", placeholder: "retype new password" }),
+        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+        React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign up" })
+    );
+};
+
+var createPasswordWindow = function createPasswordWindow(csrf) {
+    ReactDOM.render(React.createElement(PasswordWindow, { csrf: csrf }), document.querySelector("#domos"));
+};
+
+var Editor = function Editor(props) {
+    return React.createElement(
+        "div",
+        null,
+        React.createElement("img", { src: "/assets/img/face.png", onClick: function onClick() {
+                setup(props.csrf);
+            } }),
+        React.createElement(
+            "form",
+            { id: "editForm",
+                onSubmit: function onSubmit(e) {
+                    handleEdit(props.domo.name, e, props.csrf);
+                },
+                name: "domoForm",
+                action: "/edit",
+                method: "POST"
+            },
+            React.createElement(
+                "label",
+                { htmlFor: "name" },
+                "newname: "
+            ),
+            React.createElement("input", { id: "newName", type: "text", name: "name", defaultValue: props.domo.name }),
+            React.createElement(
+                "label",
+                { htmlFor: "url" },
+                "url: "
+            ),
+            React.createElement("input", { id: "newURL", type: "text", name: "url", defaultValue: props.domo.url }),
+            React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+            React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "add link" })
+        )
+    );
 };
 
 var DomoForm = function DomoForm(props) {
@@ -26,7 +138,7 @@ var DomoForm = function DomoForm(props) {
                 handleDomo(e, props.csrf);
             },
             name: "domoForm",
-            action: "/maker",
+            action: "/main",
             method: "POST",
             className: "domoForm"
         },
@@ -35,23 +147,23 @@ var DomoForm = function DomoForm(props) {
             { htmlFor: "name" },
             "name: "
         ),
-        React.createElement("input", { id: "domoName", type: "text", name: "name", placeholder: "Domo Name" }),
+        React.createElement("input", { id: "domoName", type: "text", name: "name", placeholder: "url" }),
         React.createElement(
             "label",
-            { htmlFor: "talent" },
+            { htmlFor: "url" },
             "url: "
         ),
-        React.createElement("input", { id: "domoTalent", type: "text", name: "talent", placeholder: "Domo Talent" }),
+        React.createElement("input", { id: "domoUrl", type: "text", name: "url", placeholder: "url" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
         React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "add link" })
     );
 };
 
-var DomoList = function DomoList(props) {
-    if (props.domos.length === 0) {
+var LinkList = function LinkList(props) {
+    if (props.links.length === 0) {
         return React.createElement(
             "div",
-            { className: "domoList" },
+            { className: "LinkList" },
             React.createElement(
                 "h3",
                 { className: "emptyDomo" },
@@ -60,7 +172,7 @@ var DomoList = function DomoList(props) {
         );
     }
 
-    var domoNodes = props.domos.map(function (domo) {
+    var domoNodes = props.links.map(function (domo) {
         return React.createElement(
             "div",
             { className: "linkBar" },
@@ -71,7 +183,7 @@ var DomoList = function DomoList(props) {
             ),
             React.createElement(
                 "a",
-                { href: domo.talent, className: "link" },
+                { href: domo.url, className: "link", target: "_blank" },
                 React.createElement(
                     "div",
                     { key: domo._id },
@@ -83,9 +195,11 @@ var DomoList = function DomoList(props) {
                     )
                 )
             ),
-            React.createElement("div", { className: "edit" }),
+            React.createElement("div", { className: "edit", onClick: function onClick() {
+                    openEditor(domo, props.csrf);
+                } }),
             React.createElement("div", { className: "remove", onClick: function onClick() {
-                    removeDomo(domo.name, props.csrf);
+                    removeLink(domo.name, props.csrf);
                 } })
         );
     });
@@ -97,29 +211,36 @@ var DomoList = function DomoList(props) {
     );
 };
 
-var loadDomosFromServer = function loadDomosFromServer(csrf) {
-    sendAjax('GET', '/getDomos', null, function (data) {
-        ReactDOM.render(React.createElement(DomoList, { domos: data.domos, csrf: csrf }), document.querySelector("#domos"));
+var loadLinksFromServer = function loadLinksFromServer(csrf) {
+    sendAjax('GET', '/getLinks', null, function (data) {
+        ReactDOM.render(React.createElement(LinkList, { links: data.domos, csrf: csrf }), document.querySelector("#domos"));
     });
 };
 
 var setup = function setup(csrf) {
+
+    var passwordButton = document.querySelector("#passwordButton");
+
+    passwordButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        createPasswordWindow(csrf);
+        return false;
+    });
+
     ReactDOM.render(React.createElement(DomoForm, { csrf: csrf }), document.querySelector("#makeDomo"));
 
-    ReactDOM.render(React.createElement(DomoList, { domos: [], csrf: csrf }), document.querySelector("#domos"));
+    ReactDOM.render(React.createElement(LinkList, { links: [], csrf: csrf }), document.querySelector("#domos"));
 
-    loadDomosFromServer(csrf);
+    loadLinksFromServer(csrf);
 };
 
-var ageDomo = function ageDomo(name, csrf) {
-    sendAjax('POST', "/ageDomo?_csrf=" + csrf, { name: name }, function (data) {
-        loadDomosFromServer(csrf);
-    });
+var openEditor = function openEditor(domo, csrf) {
+    ReactDOM.render(React.createElement(Editor, { domo: domo, csrf: csrf }), document.querySelector("#domos"));
 };
 
-var removeDomo = function removeDomo(name, csrf) {
-    sendAjax('POST', "/removeDomo?_csrf=" + csrf, { name: name }, function (data) {
-        loadDomosFromServer(csrf);
+var removeLink = function removeLink(name, csrf) {
+    sendAjax('POST', "/removeLink?_csrf=" + csrf, { name: name }, function (data) {
+        loadLinksFromServer(csrf);
     });
 };
 

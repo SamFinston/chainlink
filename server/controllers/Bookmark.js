@@ -29,7 +29,7 @@ const addLink = (req, res) => {
 
   const linkPromise = newLink.save();
 
-  linkPromise.then(() => res.json({ redirect: '/maker' }));
+  linkPromise.then(() => res.json({ redirect: '/main' }));
 
   linkPromise.catch((err) => {
     console.log(err);
