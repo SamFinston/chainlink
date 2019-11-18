@@ -5,7 +5,7 @@ const handleLink = (e, csrf) => {
 
     if ($("#linkName").val() == '' || $("#linkUrl").val() == '') {
 
-        handleError("RAWR! All fields are required");
+        handleError("Whoops! All fields are required");
         return false;
     }
 
@@ -26,7 +26,7 @@ const handleEdit = (oldName, e, csrf) => {
 
     if ($("#newName").val() == '' || $("#newURL").val() == '') {
 
-        handleError("RAWR! All fields are required");
+        handleError("Whoops! All fields are required");
         return false;
     }
 
@@ -47,12 +47,12 @@ const handlePassword = (e) => {
     $("#chainlinkMessage").animate({ width: 'hide' }, 350);
 
     if ($("#original").val() == '' || $("#new").val() == '' || $("#confirm").val() == '') {
-        handleError("RAWR! All fields are required");
+        handleError("Whoops! All fields are required");
         return false;
     }
 
     if ($("#new").val() !== $("#confirm").val()) {
-        handleError("RAWR! Passwords do not match");
+        handleError("Whoops! Passwords do not match");
         return false;
     }
 

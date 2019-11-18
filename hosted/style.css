@@ -79,6 +79,7 @@ nav:nth-child(1) {
 
 .button {
     cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
 }
 
 h1 {
@@ -94,6 +95,30 @@ h1 {
     font-size: 1.2em;
     float: left;
     color: white;
+}
+
+#content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#loginForm, #signupForm {
+    padding: 10px;
+}
+
+.formSubmit {
+    font-family: 'Tomorrow', sans-serif;
+}
+
+#loginForm label, #signupForm label {
+    margin-right: 20px;
+    color: white;
+}
+
+#user, #pass, #pass2 {
+    margin: 5px;
 }
 
 #passwordForm label {

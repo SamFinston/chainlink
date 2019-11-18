@@ -1,4 +1,5 @@
 const handleError = (message) => {
+    console.log(message);
     $("#errorMessage").text(message);
     $("#linkMessage").animate({width:'toggle'}, 350);
 };

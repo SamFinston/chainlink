@@ -15,7 +15,7 @@ const mainPage = (req, res) => {
 
 const addLink = (req, res) => {
   if (!req.body.name || !req.body.url || !req.body.category) {
-    return res.status(400).json({ error: 'RAWR! All fields are required' });
+    return res.status(400).json({ error: 'Whoops! All fields are required' });
   }
 
   const linkData = {

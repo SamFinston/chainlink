@@ -6,7 +6,7 @@ var handleLogin = function handleLogin(e) {
     $("#linkMessage").animate({ width: 'hide' }, 350);
 
     if ($("#user").val() == '' || $("#pass").val() == '') {
-        handleError("RAWR! Username or password is empty");
+        handleError("Whoops! Username or password is empty");
         return false;
     }
 
@@ -23,12 +23,12 @@ var handleSignup = function handleSignup(e) {
     $("#linkMessage").animate({ width: 'hide' }, 350);
 
     if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-        handleError("RAWR! All fields are required");
+        handleError("Whoops! All fields are required");
         return false;
     }
 
     if ($("#pass").val() !== $("#pass2").val()) {
-        handleError("RAWR! Passwords do not match");
+        handleError("Whoops! Passwords do not match");
         return false;
     }
 
@@ -135,6 +135,7 @@ $(document).ready(function () {
 "use strict";
 
 var handleError = function handleError(message) {
+    console.log(message);
     $("#errorMessage").text(message);
     $("#linkMessage").animate({ width: 'toggle' }, 350);
 };
