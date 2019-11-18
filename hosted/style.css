@@ -127,9 +127,10 @@ h1 {
 }
 
 #passwordForm p {
-    width: 300px;
+    width: 350px;
     color: white;
     text-align: center;
+    font-family: 'Aldrich', sans-serif;
 }
 
 #passwordForm {
