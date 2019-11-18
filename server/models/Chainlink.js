@@ -37,6 +37,12 @@ const LinkSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  // private: {
+  //   type: Boolean,
+  //   default: false,
+  //   required: true,
+  // },
 });
 
 LinkSchema.statics.toAPI = (doc) => ({

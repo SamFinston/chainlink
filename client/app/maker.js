@@ -1,15 +1,15 @@
-const handleDomo = (e, csrf) => {
+const handleLink = (e, csrf) => {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: 'hide' }, 350);
+    $("#chainlinkMessage").animate({ width: 'hide' }, 350);
 
-    if ($("#domoName").val() == '' || $("#domoUrl").val() == '') {
+    if ($("#linkName").val() == '' || $("#linkUrl").val() == '') {
 
         handleError("RAWR! All fields are required");
         return false;
     }
 
-    sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
+    sendAjax('POST', $("#linkForm").attr("action"), $("#linkForm").serialize(), function () {
         loadLinksFromServer(csrf);
     });
 
@@ -19,7 +19,7 @@ const handleDomo = (e, csrf) => {
 const handleEdit = (oldName, e, csrf) => {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: 'hide' }, 350);
+    $("#chainlinkMessage").animate({ width: 'hide' }, 350);
 
     if ($("#newName").val() == '' || $("#newURL").val() == '') {
 
@@ -39,7 +39,7 @@ const handleEdit = (oldName, e, csrf) => {
 const handlePassword = (e) => {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: 'hide' }, 350);
+    $("#chainlinkMessage").animate({ width: 'hide' }, 350);
 
     if ($("#original").val() == '' || $("#new").val() == '' || $("#confirm").val() == '') {
         handleError("RAWR! All fields are required");
@@ -81,48 +81,48 @@ const PasswordWindow = (props) => {
 const createPasswordWindow = (csrf) => {
     ReactDOM.render(
         <PasswordWindow csrf={csrf} />,
-        document.querySelector("#domos")
+        document.querySelector("#links")
     );
 };
 
 const Editor = (props) => {
     return (
         <div>
-            <img src="/assets/img/face.png" onClick={() => { setup(props.csrf) }}></img>
+            <img src="assets/img/ricon.ico" onClick={() => { setup(props.csrf) }}></img>
 
             <form id="editForm"
-                onSubmit={(e) => { handleEdit(props.domo.name, e, props.csrf) }}
-                name="domoForm"
+                onSubmit={(e) => { handleEdit(props.link.name, e, props.csrf) }}
+                name="editForm"
                 action="/edit"
                 method="POST"
             >
                 <label htmlFor="name">newname: </label>
-                <input id="newName" type="text" name="name" defaultValue={props.domo.name} />
+                <input id="newName" type="text" name="name" defaultValue={props.link.name} />
                 <label htmlFor="url">url: </label>
-                <input id="newURL" type="text" name="url" defaultValue={props.domo.url} />
+                <input id="newURL" type="text" name="url" defaultValue={props.link.url} />
                 <input type="hidden" name="_csrf" value={props.csrf} />
-                <input className="makeDomoSubmit" type="submit" value="add link" />
+                <input className="makeLinkSubmit" type="submit" value="add link" />
 
             </form>
         </div>
     );
 };
 
-const DomoForm = (props) => {
+const LinkForm = (props) => {
     return (
-        <form id="domoForm"
-            onSubmit={(e) => { handleDomo(e, props.csrf) }}
-            name="domoForm"
+        <form id="linkForm"
+            onSubmit={(e) => { handleLink(e, props.csrf) }}
+            name="linkForm"
             action="/main"
             method="POST"
-            className="domoForm"
+            className="linkForm"
         >
             <label htmlFor="name">name: </label>
-            <input id="domoName" type="text" name="name" placeholder="url" />
+            <input id="linkName" type="text" name="name" placeholder="Bookmark Title" />
             <label htmlFor="url">url: </label>
-            <input id="domoUrl" type="text" name="url" placeholder="url" />
+            <input id="linkUrl" type="text" name="url" placeholder="http://www.address.com" />
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="makeDomoSubmit" type="submit" value="add link" />
+            <input className="makeLinkSubmit" type="submit" value="add link" />
 
         </form>
     )
@@ -132,30 +132,30 @@ const LinkList = function (props) {
     if (props.links.length === 0) {
         return (
             <div className="LinkList">
-                <h3 className="emptyDomo">no links yet</h3>
+                <h3 className="emptyLink">no links yet</h3>
             </div>
         );
     }
 
 
-    const domoNodes = props.links.map(function (domo) {
+    const linkNodes = props.links.map(function (link) {
         return (
             <div className="linkBar">
-                <div className="favicon"><img src={domo.icon} className="icon"></img></div>
-                <a href={domo.url} className="link" target="_blank">
-                    <div key={domo._id} >
-                        <h3 className="linkName">{domo.name} </h3>
+                <div className="favicon"><img src={link.icon} className="icon"></img></div>
+                <a href={link.url} className="click" target="_blank">
+                    <div key={link._id} >
+                        <h3 className="linkName">{link.name} </h3>
                     </div>
                 </a>
-                <div className="edit" onClick={() => { openEditor(domo, props.csrf) }} ></div>
-                <div className="remove" onClick={() => { removeLink(domo.name, props.csrf) }}></div>
+                <div className="edit" onClick={() => { openEditor(link, props.csrf) }} ></div>
+                <div className="remove" onClick={() => { removeLink(link.name, props.csrf) }}></div>
             </div>
         );
     });
 
     return (
-        <div className="domoList">
-            {domoNodes}
+        <div className="linkList">
+            {linkNodes}
         </div>
     );
 };
@@ -163,7 +163,7 @@ const LinkList = function (props) {
 const loadLinksFromServer = (csrf) => {
     sendAjax('GET', '/getLinks', null, (data) => {
         ReactDOM.render(
-            <LinkList links={data.domos} csrf={csrf} />, document.querySelector("#domos")
+            <LinkList links={data.links} csrf={csrf} />, document.querySelector("#links")
         );
     });
 };
@@ -179,19 +179,19 @@ const setup = function (csrf) {
     });
 
     ReactDOM.render(
-        <DomoForm csrf={csrf} />, document.querySelector("#makeDomo")
+        <LinkForm csrf={csrf} />, document.querySelector("#makeLink")
     );
 
     ReactDOM.render(
-        <LinkList links={[]} csrf={csrf} />, document.querySelector("#domos")
+        <LinkList links={[]} csrf={csrf} />, document.querySelector("#links")
     );
 
     loadLinksFromServer(csrf);
 }
 
-const openEditor = (domo, csrf) => {
+const openEditor = (link, csrf) => {
     ReactDOM.render(
-        <Editor domo={domo} csrf={csrf} />, document.querySelector("#domos")
+        <Editor link={link} csrf={csrf} />, document.querySelector("#links")
     );
 };
 

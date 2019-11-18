@@ -11,11 +11,11 @@ const mainPage = (req, res) => {
       return res.status(400).json({ error: 'An error occurred' });
     }
 
-    return res.render('app', { csrfToken: req.csrfToken(), domos: docs });
+    return res.render('app', { csrfToken: req.csrfToken(), links: docs });
   });
 };
 
-const makeDomo = (req, res) => {
+const makeLink = (req, res) => {
   if (!req.body.name || !req.body.url) {
     return res.status(400).json({ error: 'All fields are required' });
   }
@@ -30,22 +30,22 @@ const makeDomo = (req, res) => {
       icon: data.icons[1].src,
     };
 
-    const newDomo = new Chainlink.LinkModel(linkData);
+    const newLink = new Chainlink.LinkModel(linkData);
 
-    const domoPromise = newDomo.save();
+    const linkPromise = newLink.save();
 
-    domoPromise.then(() => res.json({ redirect: '/main' }));
+    linkPromise.then(() => res.json({ redirect: '/main' }));
 
-    domoPromise.catch((err) => {
+    linkPromise.catch((err) => {
       console.log(err);
       if (err.code === 11000) {
-        return res.status(400).json({ error: 'Domo already exists' });
+        return res.status(400).json({ error: 'Link already exists' });
       }
 
       return res.status(400).json({ error: 'An error occured' });
     });
 
-    return domoPromise;
+    return linkPromise;
   }).catch((e) => {
     console.log(e);
     const linkData = {
@@ -55,22 +55,22 @@ const makeDomo = (req, res) => {
       icon: 'assets/img/ricon.ico',
     };
 
-    const newDomo = new Chainlink.LinkModel(linkData);
+    const newLink = new Chainlink.LinkModel(linkData);
 
-    const domoPromise = newDomo.save();
+    const linkPromise = newLink.save();
 
-    domoPromise.then(() => res.json({ redirect: '/main' }));
+    linkPromise.then(() => res.json({ redirect: '/main' }));
 
-    domoPromise.catch((err) => {
+    linkPromise.catch((err) => {
       console.log(err);
       if (err.code === 11000) {
-        return res.status(400).json({ error: 'Domo already exists' });
+        return res.status(400).json({ error: 'Link already exists' });
       }
 
       return res.status(400).json({ error: 'An error occured' });
     });
 
-    return domoPromise;
+    return linkPromise;
   });
 };
 
@@ -86,7 +86,7 @@ const getLinks = (request, response) => {
 
     // console.dir(docs[0]._doc.name);
 
-    return res.json({ domos: docs });
+    return res.json({ links: docs });
   });
 };
 
@@ -127,12 +127,12 @@ const removeLink = (request, response) => {
       return res.status(400).json({ error: 'An error has occured' });
     }
 
-    return res.json({ domos: docs });
+    return res.json({ links: docs });
   });
 };
 
 module.exports.mainPage = mainPage;
 module.exports.getLinks = getLinks;
 module.exports.removeLink = removeLink;
-module.exports.make = makeDomo;
+module.exports.make = makeLink;
 module.exports.edit = editLink;

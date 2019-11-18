@@ -1,17 +1,17 @@
 "use strict";
 
-var handleDomo = function handleDomo(e, csrf) {
+var handleLink = function handleLink(e, csrf) {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: 'hide' }, 350);
+    $("#chainlinkMessage").animate({ width: 'hide' }, 350);
 
-    if ($("#domoName").val() == '' || $("#domoUrl").val() == '') {
+    if ($("#linkName").val() == '' || $("#linkUrl").val() == '') {
 
         handleError("RAWR! All fields are required");
         return false;
     }
 
-    sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
+    sendAjax('POST', $("#linkForm").attr("action"), $("#linkForm").serialize(), function () {
         loadLinksFromServer(csrf);
     });
 
@@ -21,7 +21,7 @@ var handleDomo = function handleDomo(e, csrf) {
 var handleEdit = function handleEdit(oldName, e, csrf) {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: 'hide' }, 350);
+    $("#chainlinkMessage").animate({ width: 'hide' }, 350);
 
     if ($("#newName").val() == '' || $("#newURL").val() == '') {
 
@@ -41,7 +41,7 @@ var handleEdit = function handleEdit(oldName, e, csrf) {
 var handlePassword = function handlePassword(e) {
     e.preventDefault();
 
-    $("#domoMessage").animate({ width: 'hide' }, 350);
+    $("#chainlinkMessage").animate({ width: 'hide' }, 350);
 
     if ($("#original").val() == '' || $("#new").val() == '' || $("#confirm").val() == '') {
         handleError("RAWR! All fields are required");
@@ -92,23 +92,23 @@ var PasswordWindow = function PasswordWindow(props) {
 };
 
 var createPasswordWindow = function createPasswordWindow(csrf) {
-    ReactDOM.render(React.createElement(PasswordWindow, { csrf: csrf }), document.querySelector("#domos"));
+    ReactDOM.render(React.createElement(PasswordWindow, { csrf: csrf }), document.querySelector("#links"));
 };
 
 var Editor = function Editor(props) {
     return React.createElement(
         "div",
         null,
-        React.createElement("img", { src: "/assets/img/face.png", onClick: function onClick() {
+        React.createElement("img", { src: "assets/img/ricon.ico", onClick: function onClick() {
                 setup(props.csrf);
             } }),
         React.createElement(
             "form",
             { id: "editForm",
                 onSubmit: function onSubmit(e) {
-                    handleEdit(props.domo.name, e, props.csrf);
+                    handleEdit(props.link.name, e, props.csrf);
                 },
-                name: "domoForm",
+                name: "editForm",
                 action: "/edit",
                 method: "POST"
             },
@@ -117,45 +117,45 @@ var Editor = function Editor(props) {
                 { htmlFor: "name" },
                 "newname: "
             ),
-            React.createElement("input", { id: "newName", type: "text", name: "name", defaultValue: props.domo.name }),
+            React.createElement("input", { id: "newName", type: "text", name: "name", defaultValue: props.link.name }),
             React.createElement(
                 "label",
                 { htmlFor: "url" },
                 "url: "
             ),
-            React.createElement("input", { id: "newURL", type: "text", name: "url", defaultValue: props.domo.url }),
+            React.createElement("input", { id: "newURL", type: "text", name: "url", defaultValue: props.link.url }),
             React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-            React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "add link" })
+            React.createElement("input", { className: "makeLinkSubmit", type: "submit", value: "add link" })
         )
     );
 };
 
-var DomoForm = function DomoForm(props) {
+var LinkForm = function LinkForm(props) {
     return React.createElement(
         "form",
-        { id: "domoForm",
+        { id: "linkForm",
             onSubmit: function onSubmit(e) {
-                handleDomo(e, props.csrf);
+                handleLink(e, props.csrf);
             },
-            name: "domoForm",
+            name: "linkForm",
             action: "/main",
             method: "POST",
-            className: "domoForm"
+            className: "linkForm"
         },
         React.createElement(
             "label",
             { htmlFor: "name" },
             "name: "
         ),
-        React.createElement("input", { id: "domoName", type: "text", name: "name", placeholder: "url" }),
+        React.createElement("input", { id: "linkName", type: "text", name: "name", placeholder: "Bookmark Title" }),
         React.createElement(
             "label",
             { htmlFor: "url" },
             "url: "
         ),
-        React.createElement("input", { id: "domoUrl", type: "text", name: "url", placeholder: "url" }),
+        React.createElement("input", { id: "linkUrl", type: "text", name: "url", placeholder: "http://www.address.com" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "add link" })
+        React.createElement("input", { className: "makeLinkSubmit", type: "submit", value: "add link" })
     );
 };
 
@@ -166,54 +166,54 @@ var LinkList = function LinkList(props) {
             { className: "LinkList" },
             React.createElement(
                 "h3",
-                { className: "emptyDomo" },
+                { className: "emptyLink" },
                 "no links yet"
             )
         );
     }
 
-    var domoNodes = props.links.map(function (domo) {
+    var linkNodes = props.links.map(function (link) {
         return React.createElement(
             "div",
             { className: "linkBar" },
             React.createElement(
                 "div",
                 { className: "favicon" },
-                React.createElement("img", { src: domo.icon, className: "icon" })
+                React.createElement("img", { src: link.icon, className: "icon" })
             ),
             React.createElement(
                 "a",
-                { href: domo.url, className: "link", target: "_blank" },
+                { href: link.url, className: "click", target: "_blank" },
                 React.createElement(
                     "div",
-                    { key: domo._id },
+                    { key: link._id },
                     React.createElement(
                         "h3",
                         { className: "linkName" },
-                        domo.name,
+                        link.name,
                         " "
                     )
                 )
             ),
             React.createElement("div", { className: "edit", onClick: function onClick() {
-                    openEditor(domo, props.csrf);
+                    openEditor(link, props.csrf);
                 } }),
             React.createElement("div", { className: "remove", onClick: function onClick() {
-                    removeLink(domo.name, props.csrf);
+                    removeLink(link.name, props.csrf);
                 } })
         );
     });
 
     return React.createElement(
         "div",
-        { className: "domoList" },
-        domoNodes
+        { className: "linkList" },
+        linkNodes
     );
 };
 
 var loadLinksFromServer = function loadLinksFromServer(csrf) {
     sendAjax('GET', '/getLinks', null, function (data) {
-        ReactDOM.render(React.createElement(LinkList, { links: data.domos, csrf: csrf }), document.querySelector("#domos"));
+        ReactDOM.render(React.createElement(LinkList, { links: data.links, csrf: csrf }), document.querySelector("#links"));
     });
 };
 
@@ -227,15 +227,15 @@ var setup = function setup(csrf) {
         return false;
     });
 
-    ReactDOM.render(React.createElement(DomoForm, { csrf: csrf }), document.querySelector("#makeDomo"));
+    ReactDOM.render(React.createElement(LinkForm, { csrf: csrf }), document.querySelector("#makeLink"));
 
-    ReactDOM.render(React.createElement(LinkList, { links: [], csrf: csrf }), document.querySelector("#domos"));
+    ReactDOM.render(React.createElement(LinkList, { links: [], csrf: csrf }), document.querySelector("#links"));
 
     loadLinksFromServer(csrf);
 };
 
-var openEditor = function openEditor(domo, csrf) {
-    ReactDOM.render(React.createElement(Editor, { domo: domo, csrf: csrf }), document.querySelector("#domos"));
+var openEditor = function openEditor(link, csrf) {
+    ReactDOM.render(React.createElement(Editor, { link: link, csrf: csrf }), document.querySelector("#links"));
 };
 
 var removeLink = function removeLink(name, csrf) {
@@ -257,11 +257,11 @@ $(document).ready(function () {
 
 var handleError = function handleError(message) {
     $("#errorMessage").text(message);
-    $("#domoMessage").animate({ width: 'toggle' }, 350);
+    $("#linkMessage").animate({ width: 'toggle' }, 350);
 };
 
 var redirect = function redirect(response) {
-    $("#domoMessage").animate({ width: 'hide' }, 350);
+    $("#linkMessage").animate({ width: 'hide' }, 350);
     window.location = response.redirect;
 };
 
