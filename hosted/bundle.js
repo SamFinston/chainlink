@@ -38,6 +38,8 @@ var handleEdit = function handleEdit(oldName, e, csrf) {
         loadLinksFromServer(csrf);
     });
 
+    openLinkForm(csrf);
+
     return false;
 };
 
@@ -56,7 +58,9 @@ var handlePassword = function handlePassword(e) {
         return false;
     }
 
-    sendAjax('POST', $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
+    sendAjax('POST', $("#passwordForm").attr("action"), $("#passwordForm").serialize(), function () {
+        openLinkForm($("#secret").val());
+    });
 
     return false;
 };
@@ -64,13 +68,18 @@ var handlePassword = function handlePassword(e) {
 var PasswordWindow = function PasswordWindow(props) {
     return React.createElement(
         "form",
-        { id: "signupForm",
+        { id: "passwordForm",
             name: "signupForm",
             onSubmit: handlePassword,
             action: "/password",
             method: "POST",
             className: "mainForm"
         },
+        React.createElement(
+            "h1",
+            null,
+            "Change Password"
+        ),
         React.createElement(
             "label",
             { htmlFor: "original" },
@@ -89,46 +98,112 @@ var PasswordWindow = function PasswordWindow(props) {
             "Confirm New Password: "
         ),
         React.createElement("input", { id: "confirm", type: "password", name: "confirm", placeholder: "retype new password" }),
-        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign up" })
+        React.createElement("input", { id: "secret", type: "hidden", name: "_csrf", value: props.csrf }),
+        React.createElement(
+            "span",
+            null,
+            React.createElement("input", { className: "makeLinkSubmit closeEditor button", type: "button", onClick: function onClick() {
+                    openLinkForm(props.csrf);
+                }, value: "cancel" }),
+            React.createElement("input", { className: "makeLinkSubmit button", type: "submit", value: "update" })
+        )
+    );
+};
+
+var PrivateWindow = function PrivateWindow(props) {
+    return React.createElement(
+        "form",
+        { id: "passwordForm",
+            name: "signupForm",
+            action: "/password",
+            method: "POST",
+            className: "mainForm"
+        },
+        React.createElement(
+            "h1",
+            null,
+            "Private Chain"
+        ),
+        React.createElement(
+            "p",
+            null,
+            "Update to a pro account Today and make your bookmarks private!"
+        ),
+        React.createElement(
+            "p",
+            null,
+            "Only Five Dollars!"
+        ),
+        React.createElement(
+            "p",
+            null,
+            "(You can't afford NOT to buy it!)"
+        ),
+        React.createElement(
+            "span",
+            null,
+            React.createElement("input", { className: "makeLinkSubmit closeEditor button", type: "button", onClick: function onClick() {
+                    openLinkForm(props.csrf);
+                }, value: "cancel" }),
+            React.createElement("input", { className: "makeLinkSubmit closeEditor button", type: "button", onClick: function onClick() {
+                    openLinkForm(props.csrf);
+                }, value: "upgrade" })
+        )
     );
 };
 
 var createPasswordWindow = function createPasswordWindow(csrf) {
-    ReactDOM.render(React.createElement(PasswordWindow, { csrf: csrf }), document.querySelector("#links"));
+    ReactDOM.render(React.createElement(PasswordWindow, { csrf: csrf }), document.querySelector("#makeLink"));
+};
+
+var createPrivateWindow = function createPrivateWindow(csrf) {
+    ReactDOM.render(React.createElement(PrivateWindow, { csrf: csrf }), document.querySelector("#makeLink"));
 };
 
 var Editor = function Editor(props) {
     return React.createElement(
-        "div",
-        null,
-        React.createElement("img", { src: "assets/img/ricon.ico", onClick: function onClick() {
-                setup(props.csrf);
-            } }),
-        React.createElement(
-            "form",
-            { id: "editForm",
-                onSubmit: function onSubmit(e) {
-                    handleEdit(props.link.name, e, props.csrf);
-                },
-                name: "editForm",
-                action: "/edit",
-                method: "POST"
+        "form",
+        { id: "editForm",
+            onSubmit: function onSubmit(e) {
+                handleEdit(props.link.name, e, props.csrf);
             },
+            name: "editForm",
+            action: "/edit",
+            method: "POST"
+        },
+        React.createElement(
+            "h1",
+            null,
+            "Edit Link"
+        ),
+        React.createElement(
+            "span",
+            null,
             React.createElement(
                 "label",
                 { htmlFor: "name" },
-                "newname: "
+                "name: "
             ),
-            React.createElement("input", { id: "newName", type: "text", name: "name", defaultValue: props.link.name }),
+            React.createElement("input", { id: "newName", type: "text", name: "name", defaultValue: props.link.name })
+        ),
+        React.createElement(
+            "span",
+            null,
             React.createElement(
                 "label",
                 { htmlFor: "url" },
                 "url: "
             ),
-            React.createElement("input", { id: "newURL", type: "text", name: "url", defaultValue: props.link.url }),
-            React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-            React.createElement("input", { className: "makeLinkSubmit", type: "submit", value: "add link" })
+            React.createElement("input", { id: "newURL", type: "text", name: "url", defaultValue: props.link.url })
+        ),
+        React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+        React.createElement(
+            "span",
+            null,
+            React.createElement("input", { className: "makeLinkSubmit closeEditor button", type: "button", onClick: function onClick() {
+                    openLinkForm(props.csrf);
+                }, value: "cancel" }),
+            React.createElement("input", { className: "makeLinkSubmit button", type: "submit", value: "save" })
         )
     );
 };
@@ -146,19 +221,32 @@ var LinkForm = function LinkForm(props) {
             className: "linkForm"
         },
         React.createElement(
-            "label",
-            { htmlFor: "name" },
-            "name: "
+            "h1",
+            null,
+            "Add Link"
         ),
-        React.createElement("input", { id: "linkName", type: "text", name: "name", placeholder: "Bookmark Title" }),
         React.createElement(
-            "label",
-            { htmlFor: "url" },
-            "url: "
+            "span",
+            null,
+            React.createElement(
+                "label",
+                { htmlFor: "name" },
+                "name: "
+            ),
+            React.createElement("input", { id: "linkName", type: "text", name: "name", placeholder: "Bookmark Title" })
         ),
-        React.createElement("input", { id: "linkUrl", type: "text", name: "url", placeholder: "http://www.address.com" }),
+        React.createElement(
+            "span",
+            null,
+            React.createElement(
+                "label",
+                { htmlFor: "url" },
+                "url: "
+            ),
+            React.createElement("input", { id: "linkUrl", type: "text", name: "url", placeholder: "http://www.address.com" })
+        ),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "makeLinkSubmit", type: "submit", value: "add link" })
+        React.createElement("input", { className: "makeLinkSubmit button", type: "submit", value: "add" })
     );
 };
 
@@ -231,6 +319,7 @@ var loadLinksFromServer = function loadLinksFromServer(csrf) {
 var setup = function setup(csrf) {
 
     var passwordButton = document.querySelector("#passwordButton");
+    var privateButton = document.querySelector("#privateButton");
     var logo = document.querySelector("#title");
 
     passwordButton.addEventListener("click", function (e) {
@@ -239,9 +328,15 @@ var setup = function setup(csrf) {
         return false;
     });
 
+    privateButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        createPrivateWindow(csrf);
+        return false;
+    });
+
     logo.addEventListener("click", function (e) {
         e.preventDefault();
-        setup(csrf);
+        openLinkForm(csrf);
         return false;
     });
 
@@ -252,8 +347,12 @@ var setup = function setup(csrf) {
     loadLinksFromServer(csrf);
 };
 
+var openLinkForm = function openLinkForm(csrf) {
+    ReactDOM.render(React.createElement(LinkForm, { csrf: csrf }), document.querySelector("#makeLink"));
+};
+
 var openEditor = function openEditor(link, csrf) {
-    ReactDOM.render(React.createElement(Editor, { link: link, csrf: csrf }), document.querySelector("#links"));
+    ReactDOM.render(React.createElement(Editor, { link: link, csrf: csrf }), document.querySelector("#makeLink"));
 };
 
 var removeLink = function removeLink(name, csrf) {

@@ -56,23 +56,63 @@ nav:nth-child(1) {
     background-color: #7e5fc2;
 }
 
-.linkForm {
-    height: 35px;
-    width: 650px;
+.linkForm, #editForm, #passwordForm {
+    width: 500px;
     margin: auto;
     margin-top: 50px;
     margin-right: 32px;
     padding-top: 10px;
     background-color: rgb(13, 13, 88);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 10px;
 }
 
-.linkForm label {
+.linkForm > *, #editForm > *, #passwordForm > * {
+    margin: 10px;
+}
+
+.closeEditor {
+    text-align: center;
+}
+
+.button {
+    cursor: pointer;
+}
+
+h1 {
+    color: white;
+    font-size: 2em;
+    font-family: 'Aldrich', sans-serif;
+}
+
+.linkForm label, #editForm label, #passwordForm label {
     display: inline-block;
     width: 75px;
     margin-left: 10px;
     font-size: 1.2em;
     float: left;
     color: white;
+}
+
+#passwordForm label {
+    width: 300px;
+    text-align: center;
+}
+
+#passwordForm p {
+    width: 300px;
+    color: white;
+    text-align: center;
+}
+
+#passwordForm {
+    height: auto;
+}
+
+#privateButton {
+    cursor: pointer;
 }
 
 .linkForm input[type=text] {
@@ -255,7 +295,7 @@ nav:nth-child(1) {
 }
 
 .click:hover {
-    background-image: linear-gradient(to right, #81c8ff , rgb(13, 13, 88));
+    background-image: linear-gradient(to right, #81c8ff, rgb(13, 13, 88));
 }
 
 a {
@@ -301,12 +341,15 @@ a {
     background-color: #66bfff;
 }
 
-h3.emptyDomos {
+h3.emptyLink {
     width: 400px;
     font-size: 1.5em;
     margin: 0 auto;
     text-align: center;
     margin-top: 18px;
+    font-family: 'Aldrich', sans-serif;
+    font-size: 1.5em;
+    color: white;
 }
 
 h3.linkName, h3.linkName:visited, h3.linkName:active {
