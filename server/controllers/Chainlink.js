@@ -52,7 +52,7 @@ const makeLink = (req, res) => {
       name: req.body.name,
       url: req.body.url,
       owner: req.session.account._id,
-      icon: 'assets/img/ricon.ico',
+      icon: 'assets/img/favicon.ico',
     };
 
     const newLink = new Chainlink.LinkModel(linkData);

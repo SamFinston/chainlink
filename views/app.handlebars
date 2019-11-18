@@ -21,15 +21,18 @@
 
 <body>
   <nav><a href="/login"></a>
-    <i class="fas fa-link"></i>
+    <div class="navlink" id="title"><a href="/main"><i class="fas fa-link"></i> Chain-Link</a></div>
     <div class="navlink"><a href="/logout">Log out</a></div>
     <div class="navlink"><a id="passwordButton" href="/password">Change password</a></div>
   </nav>
-  <section id="makeLink">
+  <section id="appContent">
+    <section id="makeLink">
+    </section>
+    <section id="links">
+    </section>
   </section>
-  <section id="links">
-  </section>
-  <div id="chainlinkMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box" /><img id="err" src="assets/img/mullet.gif" alt="err" />
+  <div id="chainlinkMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box" /><img id="err"
+      src="assets/img/mullet.gif" alt="err" />
     <h3><span id="errorMessage"></span></h3>
   </div>
   <script src="/assets/bundle.js"></script>

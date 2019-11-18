@@ -15,6 +15,9 @@ var handleLink = function handleLink(e, csrf) {
         loadLinksFromServer(csrf);
     });
 
+    document.querySelector('#linkName').value = '';
+    document.querySelector('#linkUrl').value = '';
+
     return false;
 };
 
@@ -195,12 +198,20 @@ var LinkList = function LinkList(props) {
                     )
                 )
             ),
-            React.createElement("div", { className: "edit", onClick: function onClick() {
-                    openEditor(link, props.csrf);
-                } }),
-            React.createElement("div", { className: "remove", onClick: function onClick() {
-                    removeLink(link.name, props.csrf);
-                } })
+            React.createElement(
+                "div",
+                { className: "edit", onClick: function onClick() {
+                        openEditor(link, props.csrf);
+                    } },
+                React.createElement("i", { className: "far fa-edit fa-2x" })
+            ),
+            React.createElement(
+                "div",
+                { className: "remove", onClick: function onClick() {
+                        removeLink(link.name, props.csrf);
+                    } },
+                React.createElement("i", { className: "far fa-times-circle fa-2x" })
+            )
         );
     });
 
@@ -220,10 +231,17 @@ var loadLinksFromServer = function loadLinksFromServer(csrf) {
 var setup = function setup(csrf) {
 
     var passwordButton = document.querySelector("#passwordButton");
+    var logo = document.querySelector("#title");
 
     passwordButton.addEventListener("click", function (e) {
         e.preventDefault();
         createPasswordWindow(csrf);
+        return false;
+    });
+
+    logo.addEventListener("click", function (e) {
+        e.preventDefault();
+        setup(csrf);
         return false;
     });
 

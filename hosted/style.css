@@ -4,6 +4,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    background-color: #7e5fc2;
 }
 
 #logo {
@@ -17,14 +18,19 @@ html, body {
 nav {
     width: 100%;
     height: 50px;
-    background-color: #55acee;
+    background-color: rgb(13, 13, 88);
     /* font-family: 'Tomorrow', sans-serif; */
     /* font-family: 'Aldrich', sans-serif; */
     font-family: 'Share Tech Mono', monospace;
 }
 
+#title {
+    font-family: 'Aldrich', sans-serif;
+    font-size: 1.5em;
+}
+
 nav:nth-child(1) {
-    padding-left: 25px;
+    margin-left: 25px;
 }
 
 .navlink {
@@ -41,24 +47,23 @@ nav:nth-child(1) {
     text-decoration: none;
     padding: 5px;
     border-radius: 4px;
-    background-color: #55acee;
+    background-color: rgb(13, 13, 88);
     transition: background-color 0.4s ease;
 }
 
 .navlink a:hover {
     transition: background-color 0.8s ease;
-    background-color: #66bdff;
+    background-color: #7e5fc2;
 }
 
 .linkForm {
-    border: 2px solid #338acc;
     height: 35px;
     width: 650px;
-    margin-top: 0px;
+    margin: auto;
+    margin-top: 50px;
+    margin-right: 32px;
     padding-top: 10px;
-    background-color: #55acee;
-    border-bottom-right-radius: 4px;
-    border-top-right-radius: 4px;
+    background-color: rgb(13, 13, 88);
 }
 
 .linkForm label {
@@ -78,8 +83,7 @@ nav:nth-child(1) {
     transition: background-color 0.4s ease;
     display: inline;
     width: 90px;
-    background-color: #55acee;
-    border-radius: 2px;
+    background-color: rgb(13, 13, 88);
     color: white;
     text-decoration: none;
     margin-left: 10px;
@@ -91,7 +95,7 @@ nav:nth-child(1) {
 
 .makeLinkSubmit:hover {
     transition: background-color 0.4s ease;
-    background-color: #338acc;
+    background-color: #7e5fc2;
 }
 
 .mainForm {
@@ -122,9 +126,8 @@ nav:nth-child(1) {
     margin-top: 14px;
     font-size: 1.2em;
     width: 100px;
-    background-color: #55acee;
-    border-radius: 2px;
-    border-color: #66acee;
+    background-color: rgb(13, 13, 88);
+    border-color: rgb(13, 13, 88);
     padding: 3px 0px;
     color: white;
     text-decoration: none;
@@ -136,19 +139,18 @@ nav:nth-child(1) {
 
 .formSubmit:hover {
     transition: background-color 0.4s ease;
-    background-color: #338acc;
+    background-color: #7e5fc2;
 }
 
 #user, #pass, #pass2 {
     text-align: center;
     font-size: 1.1em;
     width: 180px;
-    border-radius: 6px;
 }
 
 #user:focus, #pass:focus, #pass2:focus {
     outline: none;
-    box-shadow: 0px 0px 1px 1px #55acee;
+    box-shadow: 0px 0px 1px 1px rgb(13, 13, 88);
 }
 
 #chainlinkMessage {
@@ -196,8 +198,6 @@ nav:nth-child(1) {
 #links {
     width: 40%;
     min-width: 400px;
-    /* border: 2px solid #55acee; */
-    border-radius: 4px;
     margin: 0 0;
     margin-top: 50px;
 }
@@ -211,9 +211,8 @@ nav:nth-child(1) {
     margin: 0 auto;
     margin-top: 2px;
     margin-bottom: 2px;
-    border: 2px solid #55acee;
-    border-radius: 4px;
-    background-color: #55acee;
+    border: 2px solid rgb(13, 13, 88);
+    background-color: rgb(13, 13, 88);
     padding: 10px;
     min-height: 60px;
     overflow: hidden;
@@ -227,15 +226,17 @@ nav:nth-child(1) {
     margin: 0 auto;
     margin-top: 2px;
     margin-bottom: 2px;
-    background-color: #55acee;
+    background-color: rgb(13, 13, 88);
     min-height: 60px;
     overflow: hidden;
     margin-bottom: 15px;
+    border-bottom-right-radius: 20px;
+    border-top-right-radius: 20px;
 }
 
 .favicon {
     height: 100%;
-    background-color: #55acee;
+    background-color: #7e5fc2;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -254,7 +255,7 @@ nav:nth-child(1) {
 }
 
 .click:hover {
-    background-color: #81c8ff;
+    background-image: linear-gradient(to right, #81c8ff , rgb(13, 13, 88));
 }
 
 a {
@@ -267,20 +268,30 @@ a {
 
 .remove {
     height: 60px;
-    background-color: red;
+    background-color: black;
+    color: red;
 }
 
 .remove:hover {
-    background-color: lightcoral;
+    background-color: red;
+    color: white;
+}
+
+.edit, .remove {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    background-color: rgb(13, 13, 88);
 }
 
 .edit {
     height: 60px;
-    background-color: green;
+    color: lime;
 }
 
 .edit:hover {
-    background-color: mediumaquamarine;
+    background-color: lime;
+    color: white;
 }
 
 .link:hover {
@@ -298,8 +309,14 @@ h3.emptyDomos {
     margin-top: 18px;
 }
 
-h3.linkName {
+h3.linkName, h3.linkName:visited, h3.linkName:active {
     font-size: 1.5em;
+    color: white;
+    font-family: 'Aldrich', sans-serif;
+}
+
+.fa-edit, .fa-times-circle {
+    margin: auto;
 }
 
 .link:first-child {
@@ -308,4 +325,14 @@ h3.linkName {
 
 .link:last-child {
     margin-bottom: 10px;
+}
+
+label {
+    font-family: 'Share Tech Mono', monospace;
+}
+
+#appContent {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
 }

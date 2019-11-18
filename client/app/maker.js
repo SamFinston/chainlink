@@ -12,6 +12,9 @@ const handleLink = (e, csrf) => {
     sendAjax('POST', $("#linkForm").attr("action"), $("#linkForm").serialize(), function () {
         loadLinksFromServer(csrf);
     });
+    
+    document.querySelector('#linkName').value = '';
+    document.querySelector('#linkUrl').value = '';
 
     return false;
 };
@@ -147,8 +150,8 @@ const LinkList = function (props) {
                         <h3 className="linkName">{link.name} </h3>
                     </div>
                 </a>
-                <div className="edit" onClick={() => { openEditor(link, props.csrf) }} ></div>
-                <div className="remove" onClick={() => { removeLink(link.name, props.csrf) }}></div>
+                <div className="edit" onClick={() => { openEditor(link, props.csrf) }} ><i className="far fa-edit fa-2x"></i></div>
+                <div className="remove" onClick={() => { removeLink(link.name, props.csrf) }}><i className="far fa-times-circle fa-2x"></i></div>
             </div>
         );
     });
@@ -171,10 +174,17 @@ const loadLinksFromServer = (csrf) => {
 const setup = function (csrf) {
 
     const passwordButton = document.querySelector("#passwordButton");
+    const logo = document.querySelector("#title");
 
     passwordButton.addEventListener("click", (e) => {
         e.preventDefault();
         createPasswordWindow(csrf);
+        return false;
+    });
+
+    logo.addEventListener("click", (e) => {
+        e.preventDefault();
+        setup(csrf);
         return false;
     });
 
