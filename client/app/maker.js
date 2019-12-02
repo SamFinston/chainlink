@@ -144,6 +144,10 @@ const Editor = (props) => {
             </span>
             <input type="hidden" name="_csrf" value={props.csrf} />
             <span>
+                <label htmlFor="private">private: </label>
+                <input id="private" type="checkbox" name="private" />
+            </span>
+            <span>
                 <input className="makeLinkSubmit closeEditor button" type="button" onClick={() => { openLinkForm(props.csrf) }} value="cancel" />
                 <input className="makeLinkSubmit button" type="submit" value="save" />
             </span>
@@ -169,6 +173,10 @@ const LinkForm = (props) => {
             <span>
                 <label htmlFor="url">url: </label>
                 <input id="linkUrl" type="text" name="url" placeholder="http://www.address.com" />
+            </span>
+            <span>
+                <label htmlFor="private">private: </label>
+                <input id="private" type="checkbox" name="private" />
             </span>
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input className="makeLinkSubmit button" type="submit" value="add" />

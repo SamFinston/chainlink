@@ -200,6 +200,16 @@ var Editor = function Editor(props) {
         React.createElement(
             "span",
             null,
+            React.createElement(
+                "label",
+                { htmlFor: "private" },
+                "private: "
+            ),
+            React.createElement("input", { id: "private", type: "checkbox", name: "private" })
+        ),
+        React.createElement(
+            "span",
+            null,
             React.createElement("input", { className: "makeLinkSubmit closeEditor button", type: "button", onClick: function onClick() {
                     openLinkForm(props.csrf);
                 }, value: "cancel" }),
@@ -244,6 +254,16 @@ var LinkForm = function LinkForm(props) {
                 "url: "
             ),
             React.createElement("input", { id: "linkUrl", type: "text", name: "url", placeholder: "http://www.address.com" })
+        ),
+        React.createElement(
+            "span",
+            null,
+            React.createElement(
+                "label",
+                { htmlFor: "private" },
+                "private: "
+            ),
+            React.createElement("input", { id: "private", type: "checkbox", name: "private" })
         ),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
         React.createElement("input", { className: "makeLinkSubmit button", type: "submit", value: "add" })

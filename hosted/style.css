@@ -244,6 +244,8 @@ h1 {
 }
 
 #errorMessage {
+    float: right;
+    margin-right: 20px;
     font-size: 1.2em;
     font-weight: bold;
     color: red;
@@ -404,4 +406,9 @@ label {
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
+}
+
+#private {
+    margin-top: 6px;
+    margin-left: 10px;
 }
