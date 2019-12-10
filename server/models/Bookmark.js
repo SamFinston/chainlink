@@ -42,6 +42,18 @@ const LinkSchema = new mongoose.Schema({
   image: {
     type: String,
   },
+
+  images: {
+    type: Array,
+    default: ['assets/img/favicon.ico'],
+    required: true,
+  },
+
+  private: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
 });
 
 LinkSchema.statics.toAPI = (doc) => ({

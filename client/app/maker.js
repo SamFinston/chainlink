@@ -1,3 +1,6 @@
+let privateMode = false;
+let numBookmarks = 0;
+
 const handleLink = (e, csrf) => {
     e.preventDefault();
 
@@ -9,7 +12,10 @@ const handleLink = (e, csrf) => {
         return false;
     }
 
-    sendAjax('POST', $("#linkForm").attr("action"), $("#linkForm").serialize(), function () {
+    let params = $("#linkForm").serialize() + `&order=${numBookmarks + 1}`;
+    console.log(params);
+
+    sendAjax('POST', $("#linkForm").attr("action"), params, function () {
         loadLinksFromServer(csrf);
     });
 
@@ -118,10 +124,23 @@ const createPasswordWindow = (csrf) => {
 };
 
 const createPrivateWindow = (csrf) => {
-    ReactDOM.render(
-        <PrivateWindow csrf={csrf} />,
-        document.querySelector("#makeLink")
-    );
+
+    privateMode = !privateMode;
+
+    loadLinksFromServer(csrf);
+
+    if (privateMode) {
+        document.querySelector("#privateButton").textContent = "View all";
+
+        ReactDOM.render(
+            <PrivateWindow csrf={csrf} />,
+            document.querySelector("#makeLink")
+        );
+    }
+    else {
+        document.querySelector("#privateButton").textContent = "View private";
+        openLinkForm(csrf);
+    }
 };
 
 const Editor = (props) => {
@@ -145,7 +164,10 @@ const Editor = (props) => {
             <input type="hidden" name="_csrf" value={props.csrf} />
             <span>
                 <label htmlFor="private">private: </label>
-                <input id="private" type="checkbox" name="private" />
+                <input id="private" type="checkbox" name="private" defaultChecked={props.link.private} />
+            </span>
+            <span>
+                <div id="iconSelect"></div>
             </span>
             <span>
                 <input className="makeLinkSubmit closeEditor button" type="button" onClick={() => { openLinkForm(props.csrf) }} value="cancel" />
@@ -194,16 +216,23 @@ const LinkList = function (props) {
         );
     }
 
+    numBookmarks = props.links.length;
+    console.log(numBookmarks);
 
     const linkNodes = props.links.map(function (link) {
+
         return (
-            <div className="linkBar">
-                <div className="favicon"><img src={link.icon} className="icon"></img></div>
+            <div className="linkBar" >
+                <div className="favicon"><img src={link.icon} className="icon" onClick={() => { console.log(link); }}></img></div>
                 <a href={link.url} className="click" target="_blank">
                     <div key={link._id} >
                         <h3 className="linkName">{link.name} </h3>
                     </div>
                 </a>
+                <div className="sort">
+                    <div className="up" onClick={() => { sort(link.name, true, numBookmarks, props.csrf) }}><i className="fas fa-angle-up fa-2x"></i></div>
+                    <div className="down" onClick={() => { sort(link.name, false, numBookmarks, props.csrf) }}><i className="fas fa-angle-down fa-2x"></i></div>
+                </div>
                 <div className="edit" onClick={() => { openEditor(link, props.csrf) }} ><i className="far fa-edit fa-2x"></i></div>
                 <div className="remove" onClick={() => { removeLink(link.name, props.csrf) }}><i className="far fa-times-circle fa-2x"></i></div>
             </div>
@@ -218,7 +247,7 @@ const LinkList = function (props) {
 };
 
 const loadLinksFromServer = (csrf) => {
-    sendAjax('GET', '/getLinks', null, (data) => {
+    sendAjax('GET', `/getLinks?_csrf=${csrf}`, { private: privateMode }, (data) => {
         ReactDOM.render(
             <LinkList links={data.links} csrf={csrf} />, document.querySelector("#links")
         );
@@ -226,6 +255,7 @@ const loadLinksFromServer = (csrf) => {
 };
 
 const setup = function (csrf) {
+    console.dir(numBookmarks);
 
     const passwordButton = document.querySelector("#passwordButton");
     const privateButton = document.querySelector("#privateButton");
@@ -274,6 +304,12 @@ const openEditor = (link, csrf) => {
 
 const removeLink = (name, csrf) => {
     sendAjax('POST', `/removeLink?_csrf=${csrf}`, { name: name }, (data) => {
+        loadLinksFromServer(csrf);
+    });
+};
+
+const sort = (name, up, total, csrf) => {
+    sendAjax('POST', `/sort?_csrf=${csrf}`, { name: name, up: up, total: total }, (data) => {
         loadLinksFromServer(csrf);
     });
 };

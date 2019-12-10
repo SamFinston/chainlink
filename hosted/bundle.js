@@ -1,5 +1,8 @@
 "use strict";
 
+var privateMode = false;
+var numBookmarks = 0;
+
 var handleLink = function handleLink(e, csrf) {
     e.preventDefault();
 
@@ -11,7 +14,10 @@ var handleLink = function handleLink(e, csrf) {
         return false;
     }
 
-    sendAjax('POST', $("#linkForm").attr("action"), $("#linkForm").serialize(), function () {
+    var params = $("#linkForm").serialize() + ("&order=" + (numBookmarks + 1));
+    console.log(params);
+
+    sendAjax('POST', $("#linkForm").attr("action"), params, function () {
         loadLinksFromServer(csrf);
     });
 
@@ -157,7 +163,19 @@ var createPasswordWindow = function createPasswordWindow(csrf) {
 };
 
 var createPrivateWindow = function createPrivateWindow(csrf) {
-    ReactDOM.render(React.createElement(PrivateWindow, { csrf: csrf }), document.querySelector("#makeLink"));
+
+    privateMode = !privateMode;
+
+    loadLinksFromServer(csrf);
+
+    if (privateMode) {
+        document.querySelector("#privateButton").textContent = "View all";
+
+        ReactDOM.render(React.createElement(PrivateWindow, { csrf: csrf }), document.querySelector("#makeLink"));
+    } else {
+        document.querySelector("#privateButton").textContent = "View private";
+        openLinkForm(csrf);
+    }
 };
 
 var Editor = function Editor(props) {
@@ -205,7 +223,12 @@ var Editor = function Editor(props) {
                 { htmlFor: "private" },
                 "private: "
             ),
-            React.createElement("input", { id: "private", type: "checkbox", name: "private" })
+            React.createElement("input", { id: "private", type: "checkbox", name: "private", defaultChecked: props.link.private })
+        ),
+        React.createElement(
+            "span",
+            null,
+            React.createElement("div", { id: "iconSelect" })
         ),
         React.createElement(
             "span",
@@ -283,14 +306,20 @@ var LinkList = function LinkList(props) {
         );
     }
 
+    numBookmarks = props.links.length;
+    console.log(numBookmarks);
+
     var linkNodes = props.links.map(function (link) {
+
         return React.createElement(
             "div",
             { className: "linkBar" },
             React.createElement(
                 "div",
                 { className: "favicon" },
-                React.createElement("img", { src: link.icon, className: "icon" })
+                React.createElement("img", { src: link.icon, className: "icon", onClick: function onClick() {
+                        console.log(link);
+                    } })
             ),
             React.createElement(
                 "a",
@@ -304,6 +333,24 @@ var LinkList = function LinkList(props) {
                         link.name,
                         " "
                     )
+                )
+            ),
+            React.createElement(
+                "div",
+                { className: "sort" },
+                React.createElement(
+                    "div",
+                    { className: "up", onClick: function onClick() {
+                            sort(link.name, true, numBookmarks, props.csrf);
+                        } },
+                    React.createElement("i", { className: "fas fa-angle-up fa-2x" })
+                ),
+                React.createElement(
+                    "div",
+                    { className: "down", onClick: function onClick() {
+                            sort(link.name, false, numBookmarks, props.csrf);
+                        } },
+                    React.createElement("i", { className: "fas fa-angle-down fa-2x" })
                 )
             ),
             React.createElement(
@@ -331,12 +378,13 @@ var LinkList = function LinkList(props) {
 };
 
 var loadLinksFromServer = function loadLinksFromServer(csrf) {
-    sendAjax('GET', '/getLinks', null, function (data) {
+    sendAjax('GET', "/getLinks?_csrf=" + csrf, { private: privateMode }, function (data) {
         ReactDOM.render(React.createElement(LinkList, { links: data.links, csrf: csrf }), document.querySelector("#links"));
     });
 };
 
 var setup = function setup(csrf) {
+    console.dir(numBookmarks);
 
     var passwordButton = document.querySelector("#passwordButton");
     var privateButton = document.querySelector("#privateButton");
@@ -377,6 +425,12 @@ var openEditor = function openEditor(link, csrf) {
 
 var removeLink = function removeLink(name, csrf) {
     sendAjax('POST', "/removeLink?_csrf=" + csrf, { name: name }, function (data) {
+        loadLinksFromServer(csrf);
+    });
+};
+
+var sort = function sort(name, up, total, csrf) {
+    sendAjax('POST', "/sort?_csrf=" + csrf, { name: name, up: up, total: total }, function (data) {
         loadLinksFromServer(csrf);
     });
 };

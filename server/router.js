@@ -16,6 +16,7 @@ const router = (app) => {
   app.get('/main', mid.requiresLogin, controllers.Bookmark.mainPage);
   app.post('/main', mid.requiresLogin, controllers.Bookmark.add);
   app.post('/removeLink', mid.requiresLogin, controllers.Chainlink.removeLink);
+  app.post('/sort', mid.requiresLogin, controllers.Chainlink.sort);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 
