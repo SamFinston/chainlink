@@ -36,7 +36,7 @@ const handleEdit = (oldName, e, csrf) => {
         return false;
     }
 
-    let params = $("#editForm").serialize() + `&oldName=${oldName}`;
+    let params = $("#editForm").serialize() + `&oldName=${oldName}&icon=${$("#imageSelect").val()}`;
 
     sendAjax('POST', $("#editForm").attr("action"), params, function () {
         loadLinksFromServer(csrf);
@@ -144,6 +144,13 @@ const createPrivateWindow = (csrf) => {
 };
 
 const Editor = (props) => {
+
+    const options = props.link.images.map(function (image, index) {
+        return (
+            <option value={image.src}>{index}</option>
+        );
+    });
+
     return (
 
         <form id="editForm"
@@ -167,7 +174,10 @@ const Editor = (props) => {
                 <input id="private" type="checkbox" name="private" defaultChecked={props.link.private} />
             </span>
             <span>
-                <div id="iconSelect"></div>
+                <label htmlFor="icon">icon: </label>
+                <select name="icon" id="imageSelect">
+                    {options}
+                </select>
             </span>
             <span>
                 <input className="makeLinkSubmit closeEditor button" type="button" onClick={() => { openLinkForm(props.csrf) }} value="cancel" />

@@ -38,7 +38,7 @@ var handleEdit = function handleEdit(oldName, e, csrf) {
         return false;
     }
 
-    var params = $("#editForm").serialize() + ("&oldName=" + oldName);
+    var params = $("#editForm").serialize() + ("&oldName=" + oldName + "&icon=" + $("#imageSelect").val());
 
     sendAjax('POST', $("#editForm").attr("action"), params, function () {
         loadLinksFromServer(csrf);
@@ -179,6 +179,15 @@ var createPrivateWindow = function createPrivateWindow(csrf) {
 };
 
 var Editor = function Editor(props) {
+
+    var options = props.link.images.map(function (image, index) {
+        return React.createElement(
+            "option",
+            { value: image.src },
+            index
+        );
+    });
+
     return React.createElement(
         "form",
         { id: "editForm",
@@ -228,7 +237,16 @@ var Editor = function Editor(props) {
         React.createElement(
             "span",
             null,
-            React.createElement("div", { id: "iconSelect" })
+            React.createElement(
+                "label",
+                { htmlFor: "icon" },
+                "icon: "
+            ),
+            React.createElement(
+                "select",
+                { name: "icon", id: "imageSelect" },
+                options
+            )
         ),
         React.createElement(
             "span",

@@ -123,7 +123,6 @@ const editLink = (request, response) => {
   let p = false;
   if (req.body.private) p = true;
 
-  console.dir(req.body);
 
   return Chainlink.LinkModel.findByName(req.session.account._id, req.body.oldName, (err, docs) => {
     if (err) {
@@ -135,6 +134,7 @@ const editLink = (request, response) => {
     obj.name = req.body.name;
     obj.url = req.body.url;
     obj.private = p;
+    obj.icon = req.body.icon;
     const promise = docs.save();
     promise.then(() => res.json({ status: 'OK' }));
     promise.catch(() => { res.status(400).json({ error: 'An error has occured' }); });
@@ -169,9 +169,6 @@ const swapKey = (key, object1, object2) => {
 const sort = (request, response) => {
   const req = request;
   const res = response;
-
-  const name = req.body.name;
-  console.dir(`swapping ${name}...`);
 
   return Chainlink.LinkModel.findByOwner(req.session.account._id, (err, docs) => {
     if (err) {
